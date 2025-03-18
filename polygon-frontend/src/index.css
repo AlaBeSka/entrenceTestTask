@@ -1,0 +1,94 @@
+/* Общие стили */
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #f4f7f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* Контейнер приложения */
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Блоки формы и таблицы */
+.polygon-form,
+.polygon-table {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Поля ввода и textarea */
+input,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Стилизация кнопок */
+button {
+  margin: 8px 0;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+/* Стилизация таблицы */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+th,
+td {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+tr:hover {
+  background: #f1f1f1;
+}
+
+/* Стилизация уведомлений */
+.notification {
+  background: #ffdddd;
+  color: #a94442;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+
+.notification {
+  background: #ffcccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
