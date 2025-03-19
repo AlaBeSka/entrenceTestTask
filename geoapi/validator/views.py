@@ -5,7 +5,6 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-# Импортируем модель из приложения polygons
 from polygons.models import PolygonRecord
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -19,7 +18,6 @@ class ValidatePolygonView(View):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
 
-        # Если геометрия невалидна, возвращаем сообщение "Самопересечение контура"
         if not new_polygon.valid:
             return JsonResponse({
                 'is_valid': False,
@@ -29,7 +27,6 @@ class ValidatePolygonView(View):
         intersections = []
         current_id = data.get('id')
         for existing in PolygonRecord.objects.all():
-            # Исключаем редактируемый полигон из проверки
             if current_id and existing.id == current_id:
                 continue
             try:

@@ -1,4 +1,3 @@
-# polygons/views.py
 import json
 import requests
 from rest_framework import viewsets, status
@@ -8,10 +7,6 @@ from .models import PolygonRecord
 from .serializers import PolygonRecordSerializer
 
 def process_polygon(polygon_data):
-    """
-    Обрабатывает входной GeoJSON полигона.
-    Если координаты превышают 180, корректирует их и устанавливает флаг пересечения антимеридиана.
-    """
     crosses = False
     coordinates = polygon_data.get('coordinates', [])
     new_coords = []
@@ -33,12 +28,10 @@ class PolygonRecordViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        # Обработка входящего полигона
         processed_polygon, crosses_antimeridian = process_polygon(data.get('polygon'))
         data['polygon'] = json.dumps(processed_polygon)
         data['crosses_antimeridian'] = crosses_antimeridian
 
-        # Вызов валидатора (из приложения validator)
         validator_url = 'http://localhost:8000/validator/validate/'
         try:
             validator_response = requests.post(validator_url, json={
@@ -52,7 +45,6 @@ class PolygonRecordViewSet(viewsets.ModelViewSet):
         if validator_response.status_code == 200:
             result = validator_response.json()
             if not result.get('is_valid'):
-                # Возвращаем сообщение об ошибке с деталями пересечений
                 return Response({
                     'error': 'Полигон пересекается с существующими',
                     'details': result.get('intersections')

@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Polygon, CircleMarker, useMapEvents } from 're
 import wellknown from 'wellknown';
 import 'leaflet/dist/leaflet.css';
 
-// Компонент для регистрации кликов на карте
+
 function ClickableMap({ onMapClick }) {
     useMapEvents({
         click: (e) => {
@@ -14,7 +14,7 @@ function ClickableMap({ onMapClick }) {
     return null;
 }
 
-// Функция для преобразования geometry: если это строка (WKT), парсим её в GeoJSON.
+
 function parseGeometry(geometry) {
     if (typeof geometry === 'string') {
         const cleaned = geometry.replace(/^SRID=\d+;/, '');
@@ -24,14 +24,12 @@ function parseGeometry(geometry) {
 }
 
 function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
-    // Преобразуем geometry в GeoJSON, если необходимо
+
     const geojson = polygon && polygon.geometry ? parseGeometry(polygon.geometry) : null;
 
-    // Извлекаем начальные координаты из GeoJSON и сохраняем их как строки для редактирования
     let initialCoords = [];
     if (geojson && geojson.coordinates && geojson.coordinates[0]) {
         const coords = geojson.coordinates[0];
-        // Если полигон замкнут (первая координата равна последней), удаляем последний элемент
         if (
             coords.length > 1 &&
             coords[0][0] === coords[coords.length - 1][0] &&
@@ -48,19 +46,15 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
     const [useMapInput, setUseMapInput] = useState(false);
-    // Состояние для выбранного индекса координаты (выделение)
     const [selectedIndex, setSelectedIndex] = useState(null);
-    // Состояние для пересечений (если валидатор сообщает о пересечениях)
     const [intersections, setIntersections] = useState([]);
 
-    // Функция обновления координаты (сохраняем значения как строки)
     const updateCoordinate = (index, newLng, newLat) => {
         const newCoords = [...coordinates];
         newCoords[index] = [newLng, newLat];
         setCoordinates(newCoords);
     };
 
-    // Удаление координаты
     const removeCoordinate = (index) => {
         const newCoords = coordinates.filter((_, i) => i !== index);
         setCoordinates(newCoords);
@@ -69,7 +63,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
         }
     };
 
-    // Функция вставки новой координаты после выделенной
     const insertCoordinateAfter = () => {
         if (selectedIndex === null) return;
         const newCoords = [...coordinates];
@@ -79,7 +72,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
         setSelectedIndex(selectedIndex + 1);
     };
 
-    // Добавление координаты вручную
     const addCoordinateManually = () => {
         if (lat === '' || lng === '') {
             onError("Введите значения широты и долготы.");
@@ -90,7 +82,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
         setLng('');
     };
 
-    // Обработка клика по карте: если выбрана координата, обновляем её, иначе добавляем новую
     const handleMapClick = (latlng) => {
         const newLng = latlng.lng.toString();
         const newLat = latlng.lat.toString();
@@ -118,7 +109,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
             onError("Введите минимум 3 координаты для полигона.");
             return;
         }
-        // Преобразуем строки в числа и формируем массив координат
         const polygonCoords = coordinates.map(coord => {
             const lngNum = parseFloat(coord[0]);
             const latNum = parseFloat(coord[1]);
@@ -128,7 +118,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
             onError("Все координаты должны быть числовыми.");
             return;
         }
-        // Гарантируем, что полигон замкнут: если первая и последняя координаты не совпадают, добавляем первую
         const first = polygonCoords[0];
         const last = polygonCoords[polygonCoords.length - 1];
         if (first[0] !== last[0] || first[1] !== last[1]) {
@@ -139,7 +128,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
             coordinates: [polygonCoords]
         };
 
-        // Выполняем валидацию через валидатор, передавая ID редактируемого полигона
         try {
             const validatorResponse = await axios.post('http://localhost:8000/validator/validate/', {
                 id: polygon.id,
@@ -147,7 +135,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
                 polygon: updatedPolygon
             });
             if (!validatorResponse.data.is_valid) {
-                // Если ошибка связана с самопересечением, выводим сообщение "Самопересечение контура"
                 if (validatorResponse.data.error && validatorResponse.data.error.includes("самопересекается")) {
                     onError("Самопересечение контура");
                 } else {
@@ -164,7 +151,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
             return;
         }
 
-        // Если валидация прошла, отправляем PATCH-запрос на обновление полигона
         try {
             const response = await axios.patch(`http://localhost:8000/api/polygons/${polygon.id}/`, {
                 name,
@@ -177,7 +163,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
         }
     };
 
-    // Преобразуем координаты для отрисовки на карте ([lng, lat] -> [lat, lng])
     const polygonPositions = coordinates
         .map(coord => {
             const lngNum = parseFloat(coord[0]);
@@ -289,7 +274,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
                                 />
                             )}
                             <ClickableMap onMapClick={handleMapClick} />
-                            {/* Отрисовка областей пересечения, если есть */}
                             {intersections.length > 0 && intersections.map((inter, idx) => {
                                 let interGeojson = inter.intersection;
                                 if (typeof interGeojson === 'string') {

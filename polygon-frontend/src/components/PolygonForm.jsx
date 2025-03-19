@@ -65,7 +65,6 @@ function PolygonForm({ onPolygonAdded, onError }) {
             coordinates: [polygonCoords]
         };
 
-        // Проверка самопересечения с помощью Turf.js
         try {
             const turfPolygon = turf.polygon(polygon.coordinates);
             const kinks = turf.kinks(turfPolygon);
