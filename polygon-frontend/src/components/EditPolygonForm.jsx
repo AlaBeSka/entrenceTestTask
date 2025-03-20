@@ -66,7 +66,6 @@ function EditPolygonForm({ polygon, onSave, onCancel, onError }) {
     const insertCoordinateAfter = () => {
         if (selectedIndex === null) return;
         const newCoords = [...coordinates];
-        // Вставляем пустую координату (пустые строки) сразу после выбранной
         newCoords.splice(selectedIndex + 1, 0, ["", ""]);
         setCoordinates(newCoords);
         setSelectedIndex(selectedIndex + 1);
